@@ -1,5 +1,7 @@
 # Tetris
-使用webpack + TypeScript实现俄罗斯方块 预览链接：https://kuanglinfeng.github.io/Tetris/dist/index.html
+使用webpack + TypeScript实现俄罗斯方块 
+
+预览链接：https://kuanglinfeng.github.io/Tetris/dist/index.html
 
 # 概述
 
