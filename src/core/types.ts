@@ -13,3 +13,8 @@ export interface IViewer {
    */
   remove(): void
 }
+
+/**
+ * 方块组合成的形状
+ */
+export type Sharp = Point[]
