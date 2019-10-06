@@ -86,4 +86,15 @@ export class TetrisRule {
   }
 
 
+  static rotate(tetris: SquareGroup): boolean {
+    // 得到旋转后新的形状
+    const newShape = tetris.afterRotateShape()
+    if (this.canIMove(newShape, tetris.centerPoint)) {
+      tetris.rotate()
+      return true
+    } else {
+      return false
+    }
+  }
+
 }

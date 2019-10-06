@@ -28,7 +28,7 @@ $('#btnDown').click(function () {
 
   // TetrisRule.move(tetris, {x: tetris.centerPoint.x, y: tetris.centerPoint.y + 1})
   // TetrisRule.move(tetris, MoveDirection.down)
-  TetrisRule.moveDirectly(tetris, MoveDirection.down)
+  TetrisRule.move(tetris, MoveDirection.down)
 
 })
 
@@ -57,3 +57,8 @@ $('#btnRight').click(function () {
 // $('#btnAdd').click(function () {
 //   sq.viewer = new SquarePageViewer(sq, $('#root'))
 // })
+
+$('#rotate').click(function () {
+  // const newShape = tetris.rotate()
+  TetrisRule.rotate(tetris)
+}) 
