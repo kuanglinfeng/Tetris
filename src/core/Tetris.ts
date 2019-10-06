@@ -1,44 +1,44 @@
-import { Sharp, Point } from "./types";
+import { Shape, Point } from "./types";
 import { getRandom } from "./util";
 import { SquareGroup } from "./SquareGroup";
 
 
-export const TSharp: Sharp = [
+export const TShape: Shape = [
   {x: -1, y: 0}, {x: 0, y: 0}, {x: 1, y: 0}, {x: 0, y: -1}
 ]
 
-export const LSharp: Sharp = [
+export const LShape: Shape = [
   {x: -2, y: 0}, {x: -1, y: 0}, {x: 0, y: 0}, {x: 0, y: -1}
 ]
 
-export const LMirrorSharp: Sharp = [
+export const LMirrorShape: Shape = [
   {x: 2, y: 0}, {x: 1, y: 0}, {x: 0, y: 0}, {x: 0, y: -1}
 ]
 
-export const SSharp: Sharp = [
+export const SShape: Shape = [
   {x: 0, y: 0}, {x: 1, y: 0}, {x: 0, y: 1}, {x: -1, y: 1}
 ]
 
-export const SMirrorSharp: Sharp = [
+export const SMirrorShape: Shape = [
   {x: 0, y: 0}, {x: -1, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}
 ]
 
-export const SquareSharp: Sharp = [
+export const SquareShape: Shape = [
   {x: 0, y: 0}, {x: 1, y: 0}, {x: 0, y: 1}, {x: 1, y: 1}
 ]
 
-export const LineSharp: Sharp = [
+export const LineShape: Shape = [
   {x: -1, y: 0}, {x: 0, y: 0}, {x: 1, y: 0}, {x: 2, y: 0}
 ]
 
-export const sharps = [
-  TSharp,
-  LSharp,
-  LMirrorSharp,
-  SSharp,
-  SMirrorSharp,
-  SquareSharp,
-  LineSharp
+export const Shapes = [
+  TShape,
+  LShape,
+  LMirrorShape,
+  SShape,
+  SMirrorShape,
+  SquareShape,
+  LineShape
 ]
 
 export const colors = [
@@ -54,9 +54,9 @@ export const colors = [
  * @param centerPoint 
  */
 export function createTetris(centerPoint: Point) {
-  let index = getRandom(0, sharps.length)
-  const sharp = sharps[index]
+  let index = getRandom(0, Shapes.length)
+  const Shape = Shapes[index]
   index = getRandom(0, colors.length)
   const color = colors[index]
-  return new SquareGroup(sharp, centerPoint, color)
+  return new SquareGroup(Shape, centerPoint, color)
 }

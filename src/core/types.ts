@@ -17,4 +17,11 @@ export interface IViewer {
 /**
  * 方块组合成的形状
  */
-export type Sharp = Point[]
+export type Shape = Point[]
+
+
+export enum MoveDirection {
+  left,
+  right,
+  down
+}

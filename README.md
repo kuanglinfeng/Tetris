@@ -88,6 +88,10 @@ ts-loader(官方推荐)、awesome-typescript-loader
 
 ## 俄罗斯方块的生产者类
 
+## 俄罗斯方块的规则类
+
+
+
 
 
 
