@@ -97,7 +97,6 @@ export const Shapes = [
 
 export const colors = [
   'red',
-  '#fff',
   'green',
   'blue',
   'orange'

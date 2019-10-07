@@ -108,6 +108,13 @@ ts-loader(官方推荐)、awesome-typescript-loader
 
 - 旋转要有规则，不能越出panel
 
+> 在TetrisRule类中增强一下rotate方法
+
+
+## 开发游戏类
+
+Game类清楚什么时候进行显示的切换，但不知道如何显示
+
 
 
 
