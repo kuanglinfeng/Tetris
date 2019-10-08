@@ -11,18 +11,38 @@ export class Game {
   // 当前玩家操作的方块
   private _curTetris?: SquareGroup
   // 下一个方块
-  private _nextTetris: SquareGroup = createTetris({x: 0, y: 0})
+  private _nextTetris: SquareGroup
   // 计时器
   private _timer?: number 
   // 自动下落的间隔时间
   private _duration: number = 1000
   // 保存已经落下的方块
   private _exists: Square[] = []
+  // 积分
+  private _score: number = 0
 
   constructor(private _viewer: GameViewer) {
+    // 这一行代码纯粹是为了不让TS报错 无实际含义
+    this._nextTetris = createTetris({x: 0, y: 0})
+    this.createNext()
+  }
+
+  private createNext() {
+    this._nextTetris = createTetris({x: 0, y: 0})
     this.resetCenterPoint(GameConfig.nextSize.width, this._nextTetris)
     this._viewer.showNext(this._nextTetris)
+  }
 
+  private init() {
+    this._exists.forEach(sq => {
+      if (sq.viewer) {
+        sq.viewer.remove()
+      }
+    })
+    this._exists = []
+    this.createNext()
+    this._curTetris = undefined
+    this._score = 0
   }
 
   /**
@@ -32,6 +52,11 @@ export class Game {
     // 游戏状态改变
     if (this._gameStatus === GameStatus.playing) {
       return;
+    }
+    // 从游戏结束到重新开始
+    if (this._gameStatus === GameStatus.over) {
+      // 初始化操作
+      this.init()
     }
     this._gameStatus = GameStatus.playing
     if (!this._curTetris) {
@@ -105,11 +130,24 @@ export class Game {
    */
   private switchTetris() {
     this._curTetris = this._nextTetris
+    this._curTetris.squares.forEach(sq => {
+      if (sq.viewer) {
+        sq.viewer.remove()
+      }
+    })
     this.resetCenterPoint(GameConfig.panelSize.width, this._curTetris)
-    this._nextTetris = createTetris({x: 0, y: 0})
-    this.resetCenterPoint(GameConfig.nextSize.width, this._nextTetris)
+    // 有可能出问题 当方块一出现时 就已经和之前的方块重叠了
+    // 判断游戏是否结束
+    if( !TetrisRule.canIMove(this._curTetris.shape, this._curTetris.centerPoint, this._exists) ) {
+      // 游戏结束
+      this._gameStatus = GameStatus.over
+      clearInterval(this._timer)
+      this._timer = undefined
+      return
+    }
+
+    this.createNext()
     this._viewer.switch(this._curTetris)
-    this._viewer.showNext(this._nextTetris)
   }
 
   /**
@@ -122,10 +160,10 @@ export class Game {
     const y = 0
     tetris.centerPoint = {x, y}
     while (tetris.squares.some(item => item.point.y < 0)) {
-      tetris.squares.forEach(sq => sq.point = {
-        x: sq.point.x,
-        y: sq.point.y + 1
-      })
+      tetris.centerPoint  = {
+        x: tetris.centerPoint.x,
+        y: tetris.centerPoint.y + 1
+      }
     }
 
   }
@@ -139,10 +177,29 @@ export class Game {
 
     // 处理移除
     const num = TetrisRule.deleteSquares(this._exists)
-    console.log(num)
+    
+    // 增加积分
+    this.addScore(num)
+
     // 切换方块
     this.switchTetris()
 
   }
 
+
+  private addScore(lineNum: number) {
+    if (lineNum === 0) {
+      return 
+    }
+    if (lineNum === 1) {
+      this._score += 10
+    } else if (lineNum === 2) {
+      this._score += 25
+    } else if (lineNum === 3) {
+      this._score += 50
+    } else {
+      this._score += 100
+    }
+    console.log(this._score)
+  }
 }

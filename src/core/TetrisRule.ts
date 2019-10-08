@@ -142,17 +142,18 @@ export class TetrisRule {
         if (sq.viewer) {
           sq.viewer.remove()
         }
-        // 2. 剩下的，y坐标比当前y坐标小的方块，y+1
-        exists.filter(sq => sq.point.y < y).forEach(sq => {
-          sq.point = {
-            x: sq.point.x,
-            y: sq.point.y + 1
-          }
-        })
-        // 3. 从数组中消除逻辑上的方块
+        // 2. 从数组中消除逻辑上的方块
         const index = exists.indexOf(sq)
         exists.splice(index, 1)
       })
+       // 3. 剩下的，y坐标比当前y坐标小的方块，y+1
+      exists.filter(sq => sq.point.y < y).forEach(sq => {
+      sq.point = {
+          x: sq.point.x,
+          y: sq.point.y + 1
+        }
+      })
+
       return true
     }
     return false
