@@ -3,6 +3,7 @@ import { SquareGroup } from "./SquareGroup";
 import { createTetris } from "./Tetris";
 import { TetrisRule } from "./TetrisRule";
 import GameConfig from "./GameConfig";
+import { Square } from "./Square";
 
 export class Game {
   // 游戏状态
@@ -15,6 +16,8 @@ export class Game {
   private _timer?: number 
   // 自动下落的间隔时间
   private _duration: number = 1000
+  // 保存已经落下的方块
+  private _exists: Square[] = []
 
   constructor(private _viewer: GameViewer) {
     this.resetCenterPoint(GameConfig.nextSize.width, this._nextTetris)
@@ -66,6 +69,8 @@ export class Game {
   controlDown() {
     if(this._curTetris && this._gameStatus === GameStatus.playing) {
       TetrisRule.moveDirectly(this._curTetris, MoveDirection.down)
+      // 触底
+      this.hitBottom()
     }
   }
 
@@ -87,7 +92,10 @@ export class Game {
     }
     this._timer = setInterval(() => {
       if (this._curTetris) {
-        TetrisRule.move(this._curTetris, MoveDirection.down)
+        if(!TetrisRule.move(this._curTetris, MoveDirection.down)) {
+          // 触底
+          this.hitBottom()
+        }
       }
     }, this._duration)
   }
@@ -122,5 +130,16 @@ export class Game {
 
   }
 
+  /**
+   * 触底之后的操作
+   */
+  private hitBottom() {
+    // 将当前的俄罗斯方块包含的小方块加入到exists数组中
+    this._exists.push(...this._curTetris!.squares)
+    // 切换方块
+    this.switchTetris()
+
+    第十节 14：14
+  }
 
 }
