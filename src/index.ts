@@ -6,13 +6,11 @@ var g = new Game(new GamePageViewer())
 // g.start()
 
 
-$('#btnStart').click(() => {
+$('#btnBlank').click(() => {
+  console.log(11111111111)
   g.start()
 })
 
-$('#btnPause').click(() => {
-  g.pause()
-})
 
 $('#btnLeft').click(() => {
   g.controlLeft()

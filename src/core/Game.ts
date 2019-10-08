@@ -15,22 +15,49 @@ export class Game {
   // 计时器
   private _timer?: number 
   // 自动下落的间隔时间
-  private _duration: number = 1000
+  private _duration: number
   // 保存已经落下的方块
   private _exists: Square[] = []
   // 积分
   private _score: number = 0
 
+
   constructor(private _viewer: GameViewer) {
+    this._duration = GameConfig.levels[0].duration
     // 这一行代码纯粹是为了不让TS报错 无实际含义
     this._nextTetris = createTetris({x: 0, y: 0})
     this.createNext()
+    this._viewer.init(this)
+    this._viewer.showScore(this.score)
   }
 
   private createNext() {
     this._nextTetris = createTetris({x: 0, y: 0})
     this.resetCenterPoint(GameConfig.nextSize.width, this._nextTetris)
     this._viewer.showNext(this._nextTetris)
+  }
+
+  public get gameStatus() {
+    return this._gameStatus
+  }
+
+  public get score() {
+    return this._score
+  }
+
+  public set score(score) {
+    this._score = score
+    this._viewer.showScore(score)
+    const curLevel = GameConfig.levels.filter(item => item.score <= score).pop()!
+    if (curLevel.duration === this._duration) {
+      return
+    }
+    this._duration = curLevel.duration
+    if (this._timer) {
+      clearInterval(this._timer)
+      this._timer = undefined 
+      this.autoDrop()
+    }
   }
 
   private init() {
@@ -42,7 +69,7 @@ export class Game {
     this._exists = []
     this.createNext()
     this._curTetris = undefined
-    this._score = 0
+    this.score = 0
   }
 
   /**
@@ -64,7 +91,7 @@ export class Game {
       this.switchTetris()
     }
     this.autoDrop()
-
+    this._viewer.onGameStart()
   }
 
 
@@ -77,6 +104,7 @@ export class Game {
       clearInterval(this._timer)
       this._timer = undefined
     }
+    this._viewer.onGamePause()
   }
 
   controlLeft() {
@@ -143,6 +171,7 @@ export class Game {
       this._gameStatus = GameStatus.over
       clearInterval(this._timer)
       this._timer = undefined
+      this._viewer.onGameOver()
       return
     }
 
@@ -192,14 +221,13 @@ export class Game {
       return 
     }
     if (lineNum === 1) {
-      this._score += 10
+      this.score += 10
     } else if (lineNum === 2) {
-      this._score += 25
+      this.score += 25
     } else if (lineNum === 3) {
-      this._score += 50
+      this.score += 50
     } else {
-      this._score += 100
+      this.score += 100
     }
-    console.log(this._score)
   }
 }

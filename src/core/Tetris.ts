@@ -96,10 +96,12 @@ export const Shapes = [
 ]
 
 export const colors = [
-  'red',
-  'green',
-  'blue',
-  'orange'
+  'hotpink',
+  'salmon',
+  'deepskyblue',
+  'gold',
+  'indigo',
+  'green'
 ]
 
 /**

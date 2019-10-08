@@ -1,4 +1,5 @@
 import { SquareGroup } from "./SquareGroup";
+import { Game } from "./Game";
 
 export interface Point {
   readonly x: number,
@@ -47,5 +48,22 @@ export interface GameViewer {
    * @param tetris 切换的方块对象
    */
   switch(tetris: SquareGroup): void
+
+  /**
+   * 完成游戏界面的初始化
+   */
+  init(game: Game): void
+
+  /**
+   * 显示分数
+   * @param score 
+   */
+  showScore(score: number): void 
+
+  onGamePause(): void
+
+  onGameStart(): void
+ 
+  onGameOver(): void
 
 }

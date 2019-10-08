@@ -4,7 +4,7 @@ import { Shape, Point } from "./types";
 /**
  * 组合方块
  */
-export class SquareGroup {
+export abstract class SquareGroup {
 
   private _squares: readonly Square[]
 
@@ -89,6 +89,5 @@ export class SquareGroup {
     this._shape = newShape
     this.setSquarePoints()
   }
-
 
 }
