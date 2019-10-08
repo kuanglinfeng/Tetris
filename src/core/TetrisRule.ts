@@ -1,6 +1,7 @@
 import { Shape, Point, MoveDirection } from "./types";
 import GameConfig from "./GameConfig";
 import { SquareGroup } from "./SquareGroup";
+import { Square } from "./Square";
 
 
 function isPoint(obj:any):obj is Point {
@@ -19,7 +20,7 @@ export class TetrisRule {
    * 判断某个形状的方块 是否能移动到目标位置
    * @param 
    */
-  static canIMove(shape: Shape, targetPoint: Point): boolean {
+  static canIMove(shape: Shape, targetPoint: Point, exists: Square[]): boolean {
 
     // 假设，中心点（0，0）已经移动到了目标位置（a, b），算出每个小方块的坐标
     const targetSquarePoints: Point[] = shape.map(item => {
@@ -30,7 +31,7 @@ export class TetrisRule {
     })
 
     // 边界判断
-    const judge = targetSquarePoints.some(point => {
+    let judge = targetSquarePoints.some(point => {
       // 是否超出边界
       return (point.x < 0 || point.x > GameConfig.panelSize.width - 1 
         || point.y < 0 || point.y > GameConfig.panelSize.height - 1)
@@ -38,16 +39,23 @@ export class TetrisRule {
 
     if (judge)  return false
 
+    // 判断是否与已有的方块有重叠
+    judge = targetSquarePoints.some(point => 
+      exists.some(item => item.point.x === point.x && item.point.y === point.y)
+    )
+    
+    if (judge)  return false
+
     return true
   }
 
   // 对move方法进行重载声明
-  static move(tetris: SquareGroup, point: Point): boolean
-  static move(tetris: SquareGroup, direction: MoveDirection): boolean
+  static move(tetris: SquareGroup, point: Point, exists: Square[]): boolean
+  static move(tetris: SquareGroup, direction: MoveDirection, exists: Square[]): boolean
 
-  static move(tetris: SquareGroup, targetPointOrDirection: Point | MoveDirection):boolean {
+  static move(tetris: SquareGroup, targetPointOrDirection: Point | MoveDirection, exists: Square[]):boolean {
     if (isPoint(targetPointOrDirection)) {
-      if (TetrisRule.canIMove(tetris.shape, targetPointOrDirection)) {
+      if (TetrisRule.canIMove(tetris.shape, targetPointOrDirection, exists)) {
         tetris.centerPoint = targetPointOrDirection
         return true
       }
@@ -71,7 +79,7 @@ export class TetrisRule {
           y: tetris.centerPoint.y
         }
       }
-      return TetrisRule.move(tetris, targetPoint)      
+      return TetrisRule.move(tetris, targetPoint, exists)      
     }
 
   }
@@ -81,20 +89,75 @@ export class TetrisRule {
    * @param tetris 
    * @param direction 
    */
-  static moveDirectly(tetris: SquareGroup, direction: MoveDirection): void {
-    while (TetrisRule.move(tetris, direction)) {}
+  static moveDirectly(tetris: SquareGroup, direction: MoveDirection, exists: Square[]): void {
+    while (TetrisRule.move(tetris, direction, exists)) {}
   }
 
 
-  static rotate(tetris: SquareGroup): boolean {
+  static rotate(tetris: SquareGroup, exists: Square[]): boolean {
     // 得到旋转后新的形状
     const newShape = tetris.afterRotateShape()
-    if (this.canIMove(newShape, tetris.centerPoint)) {
+    if (this.canIMove(newShape, tetris.centerPoint, exists)) {
       tetris.rotate()
       return true
     } else {
       return false
     }
   }
+
+
+  /**
+   * 从已存在的方块中进行消除 并返回消除的行数
+   * @param exists 
+   */
+  static deleteSquares(exists: Square[]): number {
+    // 1. 获取y坐标数组
+    const ys = exists.map(sq => sq.point.y)
+
+    // 2. 获取最大最小的y坐标
+    const maxY = Math.max(...ys)
+    const minY = Math.min(...ys)
+
+    // 3. 循环判断每一行是否可消除
+    let lineSum = 0
+    for (let y = minY; y <= maxY; y++) {
+      if (this.deleteLine(exists, y)) {
+        lineSum++
+      }
+    }
+    return lineSum
+  }
+
+  /**
+   * 消除一行
+   * @param exists 
+   * @param y 
+   */
+  private static deleteLine(exists: Square[], y: number): boolean {    
+    const squares = exists.filter(sq => sq.point.y === y)
+    if (squares.length === GameConfig.panelSize.width) {
+      // 这一行可以消除
+      squares.forEach(sq => {
+        // 1. 从界面中移除视觉上的方块
+        if (sq.viewer) {
+          sq.viewer.remove()
+        }
+        // 2. 剩下的，y坐标比当前y坐标小的方块，y+1
+        exists.filter(sq => sq.point.y < y).forEach(sq => {
+          sq.point = {
+            x: sq.point.x,
+            y: sq.point.y + 1
+          }
+        })
+        // 3. 从数组中消除逻辑上的方块
+        const index = exists.indexOf(sq)
+        exists.splice(index, 1)
+      })
+      return true
+    }
+    return false
+  }
+
+
 
 }

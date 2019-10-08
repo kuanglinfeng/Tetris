@@ -56,19 +56,19 @@ export class Game {
 
   controlLeft() {
     if(this._curTetris && this._gameStatus === GameStatus.playing) {
-      TetrisRule.move(this._curTetris, MoveDirection.left)
+      TetrisRule.move(this._curTetris, MoveDirection.left, this._exists)
     }
   }
 
   controlRight() {
     if(this._curTetris && this._gameStatus === GameStatus.playing) {
-      TetrisRule.move(this._curTetris, MoveDirection.right)
+      TetrisRule.move(this._curTetris, MoveDirection.right, this._exists)
     }
   }
 
   controlDown() {
     if(this._curTetris && this._gameStatus === GameStatus.playing) {
-      TetrisRule.moveDirectly(this._curTetris, MoveDirection.down)
+      TetrisRule.moveDirectly(this._curTetris, MoveDirection.down, this._exists)
       // 触底
       this.hitBottom()
     }
@@ -76,7 +76,7 @@ export class Game {
 
   controlRotate() {
     if(this._curTetris && this._gameStatus === GameStatus.playing) {
-      TetrisRule.rotate (this._curTetris)
+      TetrisRule.rotate (this._curTetris, this._exists)
     }
   }
 
@@ -92,7 +92,7 @@ export class Game {
     }
     this._timer = setInterval(() => {
       if (this._curTetris) {
-        if(!TetrisRule.move(this._curTetris, MoveDirection.down)) {
+        if(!TetrisRule.move(this._curTetris, MoveDirection.down, this._exists)) {
           // 触底
           this.hitBottom()
         }
@@ -136,10 +136,13 @@ export class Game {
   private hitBottom() {
     // 将当前的俄罗斯方块包含的小方块加入到exists数组中
     this._exists.push(...this._curTetris!.squares)
+
+    // 处理移除
+    const num = TetrisRule.deleteSquares(this._exists)
+    console.log(num)
     // 切换方块
     this.switchTetris()
 
-    第十节 14：14
   }
 
 }
