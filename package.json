@@ -20,6 +20,6 @@
   "author": "Flinn <358530466@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "jquery": "^3.4.1"
+    "jquery": "^3.5.0"
   }
 }
